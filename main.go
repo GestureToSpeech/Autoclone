@@ -4,15 +4,22 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"os"
 	"os/exec"
 	"strings"
 )
 
+type User struct {
+	Email string
+	Name  string
+}
+
 type Config struct {
 	PushFolder  string
 	PullFolder  string
 	SshPushBase string
+	Users       []User
 	Repos       []struct {
 		Ssh string
 		Key string
@@ -97,6 +104,11 @@ func main() {
 		originRepoDir := getRepoFolder(repo.Ssh, config.PullFolder)
 		destRepoDir := getRepoFolder(gitLabRepo, config.PushFolder)
 		for _, branch := range allBranches {
+			err = setUser(config.Users, destRepoDir)
+			if err != nil {
+				log.Printf("Couldn't set user for repo %s; error message: %s", gitLabRepo, err)
+				return
+			}
 			err = copyBranch(branch, originRepoDir, destRepoDir, config.PushFolder)
 			if err != nil {
 				log.Printf("Couldn't copy branch %s from repo %s; error message: %s", branch, repo.Ssh, err)
@@ -129,6 +141,18 @@ func getRepoFolder(ssh string, folder string) string {
 	repoName := getRepoName(ssh)
 
 	return folder + repoName + "/"
+}
+
+func setUser(users []User, dir string) error {
+	numUsers := len(users)
+	userId := rand.Intn(numUsers)
+
+	err := executeCommand(dir, "git", "config", "user.email", users[userId].Email)
+	if err != nil {
+		return err
+	}
+
+	return executeCommand(dir, "git", "config", "user.name", users[userId].Name)
 }
 
 func copyFiles(destDir string, originDir string, pushDir string) error {
