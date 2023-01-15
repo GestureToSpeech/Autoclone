@@ -83,14 +83,26 @@ func main() {
 			return
 		}
 
+		err = fetchOrigin(config.PushFolder, gitLabRepo)
+		if err != nil {
+			log.Printf("Error fetching origin repo %s; error message: %s", gitLabRepo, err)
+			return
+		}
+
 		allBranches, err := getAllBranches(config.PullFolder, repo.Ssh)
 		if err != nil {
 			log.Printf("Couldn't get all branches from repo %s; error message: %s", repo.Ssh, err)
 			return
 		}
 
+		originRepoDir := getRepoFolder(repo.Ssh, config.PullFolder)
+		destRepoDir := getRepoFolder(gitLabRepo, config.PushFolder)
 		for _, branch := range allBranches {
-			log.Print(branch)
+			err = copyBranch(branch, originRepoDir, destRepoDir, config.PushFolder)
+			if err != nil {
+				log.Printf("Couldn't copy branch %s from repo %s; error message: %s", branch, repo.Ssh, err)
+				return
+			}
 		}
 	}
 }
@@ -120,10 +132,7 @@ func getRepoFolder(ssh string, folder string) string {
 	return folder + repoName + "/"
 }
 
-func copyFiles(pullDir string, pushDir string, repoSSH string) error {
-	destDir := getRepoFolder(repoSSH, pushDir)
-	originDir := getRepoFolder(repoSSH, pullDir)
-
+func copyFiles(destDir string, originDir string, pushDir string) error {
 	// remove old files
 	err := executeCommand(
 		"",
@@ -159,6 +168,30 @@ func copyFiles(pullDir string, pushDir string, repoSSH string) error {
 	)
 
 	return err
+}
+
+func copyBranch(branch string, originDir string, destDir string, pushDir string) error {
+	err := executeCommand(originDir, "git", "checkout", branch)
+	if err != nil {
+		return err
+	}
+
+	err = executeCommand(originDir, "git", "pull")
+	if err != nil {
+		return err
+	}
+
+	err = executeCommand(destDir, "git", "checkout", "-b", branch)
+	if err != nil {
+		return err
+	}
+
+	err = copyFiles(destDir, originDir, pushDir)
+	if err != nil {
+		return err
+	}
+
+	return executeCommand(destDir, "git", "push", "origin", branch)
 }
 
 func cloneRepo(dir string, repoSSH string) error {
