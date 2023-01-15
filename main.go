@@ -111,7 +111,7 @@ func main() {
 				log.Printf("Couldn't set user for repo %s; error message: %s", repo.Ssh, err)
 				return
 			}
-			log.Print("User set")
+
 			err = copyBranch(branch, originRepoDir, destRepoDir, config.PushFolder)
 			if err != nil {
 				log.Printf("Couldn't copy branch %s from repo %s; error message: %s", branch, repo.Ssh, err)
@@ -219,21 +219,18 @@ func copyBranch(branch string, originDir string, destDir string, pushDir string)
 		return err
 	}
 
-	/*
-		log.Print("Pushing changes")
-		err = executeCommand(destDir, "git", "add", ".")
-		if err != nil {
-			return err
-		}
+	log.Print("Pushing changes")
+	err = executeCommand(destDir, "git", "add", ".")
+	if err != nil {
+		return err
+	}
 
-		err = executeCommand(destDir, "git", "commit", "-m", "Update")
-		if err != nil {
-			return err
-		}
+	err = executeCommand(destDir, "git", "commit", "-m", "Update")
+	if err != nil {
+		return err
+	}
 
-		return executeCommand(destDir, "git", "push", "origin", branch)
-	*/
-	return nil
+	return executeCommand(destDir, "git", "push", "origin", branch)
 }
 
 func cloneRepo(dir string, repoSSH string) error {
