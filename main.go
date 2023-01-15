@@ -107,6 +107,11 @@ func main() {
 		destRepoDir := getRepoFolder(gitLabRepo, config.PushFolder)
 		for _, branch := range allBranches {
 			err = setUser(config.Users, destRepoDir)
+			if err != nil {
+				log.Printf("Couldn't set user for repo %s; error message: %s", repo.Ssh, err)
+				return
+			}
+
 			err = copyBranch(branch, originRepoDir, destRepoDir, config.PushFolder)
 			if err != nil {
 				log.Printf("Couldn't copy branch %s from repo %s; error message: %s", branch, repo.Ssh, err)
