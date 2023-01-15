@@ -188,6 +188,16 @@ func copyBranch(branch string, originDir string, destDir string, pushDir string)
 		return err
 	}
 
+	err = executeCommand(destDir, "git", "add", ".")
+	if err != nil {
+		return err
+	}
+
+	err = executeCommand(destDir, "git", "commit", "-m", "Update")
+	if err != nil {
+		return err
+	}
+
 	return executeCommand(destDir, "git", "push", "origin", branch)
 }
 
