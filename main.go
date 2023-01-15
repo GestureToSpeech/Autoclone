@@ -11,9 +11,10 @@ import (
 )
 
 type Config struct {
-	PushFolder string
-	PullFolder string
-	Repos      []struct {
+	PushFolder  string
+	PullFolder  string
+	SshPushBase string
+	Repos       []struct {
 		Ssh string
 		Key string
 	}
@@ -69,6 +70,13 @@ func main() {
 			return
 		}
 
+		gitLabRepo := config.SshPushBase + getRepoName(repo.Ssh) + ".git"
+		err = cloneRepo(config.PushFolder, gitLabRepo)
+		if err != nil {
+			log.Printf("Error cloning repo %s; error message: %s", gitLabRepo, err)
+			return
+		}
+
 		allBranches, err := getAllBranches(config.PullFolder, repo.Ssh)
 		if err != nil {
 			log.Printf("Couldn't get all branches from repo %s; error message: %s", repo.Ssh, err)
@@ -92,10 +100,14 @@ func executeCommand(dir string, commandName string, arg ...string) error {
 	return nil
 }
 
-func getRepoFolder(ssh string, folder string) string {
+func getRepoName(ssh string) string {
 	repoSSHParts := strings.Split(ssh, "/")
 	repoName := repoSSHParts[len(repoSSHParts)-1]
-	repoName = strings.TrimSuffix(repoName, ".git")
+	return strings.TrimSuffix(repoName, ".git")
+}
+
+func getRepoFolder(ssh string, folder string) string {
+	repoName := getRepoName(ssh)
 
 	return folder + repoName + "/"
 }
@@ -141,8 +153,8 @@ func copyFiles(pullDir string, pushDir string, repoSSH string) error {
 	return err
 }
 
-func cloneRepo(pullDir string, repoSSH string) error {
-	repoFolder := getRepoFolder(repoSSH, pullDir)
+func cloneRepo(dir string, repoSSH string) error {
+	repoFolder := getRepoFolder(repoSSH, dir)
 
 	_, err := os.Stat(repoFolder)
 	if !os.IsNotExist(err) {
@@ -151,7 +163,7 @@ func cloneRepo(pullDir string, repoSSH string) error {
 	}
 
 	log.Printf("Initializing repository %s", repoSSH)
-	err = executeCommand(pullDir, "git", "clone", repoSSH)
+	err = executeCommand(dir, "git", "clone", repoSSH)
 	return err
 }
 

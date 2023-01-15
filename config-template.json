@@ -1,6 +1,7 @@
 {
   "pushFolder": "",
   "pullFolder": "",
+  "sshPushBase": "",
   "repos": [
     {
       "ssh": "",
