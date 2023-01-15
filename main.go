@@ -212,6 +212,7 @@ func copyBranch(branch string, originDir string, destDir string, pushDir string)
 	if err != nil {
 		return err
 	}
+	log.Print("Finished")
 
 	/*
 		log.Print("Pushing changes")
