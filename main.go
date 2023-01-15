@@ -48,6 +48,23 @@ func main() {
 		fmt.Println("Error removing push folder", err)
 		return
 	}
+	err = executeCommand("", "rm", "-rf", fmt.Sprintf("\"%s\"", config.PullFolder))
+	if err != nil {
+		fmt.Println("Error removing pull folder", err)
+		return
+	}
+
+	// create pull and push folders
+	err = executeCommand("", "mkdir", fmt.Sprintf("\"%s\"", config.PushFolder))
+	if err != nil {
+		fmt.Println("Error creating push folder", err)
+		return
+	}
+	err = executeCommand("", "mkdir", fmt.Sprintf("\"%s\"", config.PullFolder))
+	if err != nil {
+		fmt.Println("Error creating pull folder", err)
+		return
+	}
 }
 
 func executeCommand(dir string, commandName string, arg ...string) error {
