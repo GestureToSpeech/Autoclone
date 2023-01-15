@@ -114,12 +114,11 @@ func main() {
 			}
 
 			log.Printf("Copy branch %s from repo %s", branch, repo.Ssh)
-			err = copyBranch(branch, originRepoDir, destRepoDir, config.PushFolder)
+			err = copyBranch(branch, originRepoDir, destRepoDir)
 			if err != nil {
 				log.Printf("Couldn't copy branch %s from repo %s; error message: %s", branch, repo.Ssh, err)
 				return
 			}
-			break
 		}
 	}
 }
@@ -161,8 +160,7 @@ func setUser(users []User, dir string) error {
 	return executeCommand(dir, "git", "config", "user.name", users[userId].Name)
 }
 
-func copyFiles(destDir string, originDir string, pushDir string) error {
-	log.Printf("%s %s %s", destDir, originDir, pushDir)
+func copyFiles(destDir string, originDir string) error {
 	// remove old files
 	_, err := os.Stat(destDir)
 	if !os.IsNotExist(err) {
@@ -198,7 +196,7 @@ func copyFiles(destDir string, originDir string, pushDir string) error {
 	return err
 }
 
-func copyBranch(branch string, originDir string, destDir string, pushDir string) error {
+func copyBranch(branch string, originDir string, destDir string) error {
 	log.Print("Pull changes and set correct branch")
 	err := executeCommand(originDir, "git", "checkout", branch)
 	if err != nil {
@@ -216,7 +214,7 @@ func copyBranch(branch string, originDir string, destDir string, pushDir string)
 	}
 
 	log.Print("Copy files")
-	err = copyFiles(destDir, originDir, pushDir)
+	err = copyFiles(destDir, originDir)
 	if err != nil {
 		return err
 	}
