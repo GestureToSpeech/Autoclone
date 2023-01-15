@@ -149,7 +149,7 @@ func getRepoFolder(ssh string, folder string) string {
 func setUser(users []User, dir string) error {
 	numUsers := len(users)
 	userId := rand.Intn(numUsers)
-
+	log.Printf("Chosen user: %s; %s", users[userId].Name, users[userId].Email)
 	err := executeCommand(dir, "git", "config", "user.email", users[userId].Email)
 	if err != nil {
 		return err
