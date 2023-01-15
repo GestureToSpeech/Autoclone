@@ -208,12 +208,13 @@ func copyBranch(branch string, originDir string, destDir string) error {
 		return err
 	}
 
-	err = executeCommand(destDir, "git", "checkout", "-b", branch)
+	err = executeCommand(destDir, "git", "checkout", branch)
 	if err != nil {
-		err = executeCommand(destDir, "git", "checkout", branch)
+		err = executeCommand(destDir, "git", "checkout", "-b", branch)
 		if err != nil {
 			return err
 		}
+	} else {
 		log.Printf("Pull updates for %s", destDir)
 		err = executeCommand(destDir, "git", "pull")
 		if err != nil {
