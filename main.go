@@ -222,17 +222,18 @@ func copyBranch(branch string, originDir string, destDir string) error {
 		return err
 	}
 
-	log.Print("Pushing changes to repository - start")
+	log.Print("Pushing changes to repository")
 	err = executeCommand(destDir, "git", "add", ".")
 	if err != nil {
 		return err
 	}
-	log.Print("Commit")
+
 	err = executeCommand(destDir, "git", "commit", "-m", "Update")
 	if err != nil {
-		return err
+		log.Print("No changes")
+		return nil
 	}
-	log.Print("Push")
+
 	return executeCommand(destDir, "git", "push", "origin", branch)
 }
 
