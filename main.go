@@ -146,7 +146,7 @@ func copyFiles(destDir string, originDir string, pushDir string) error {
 			destDir+".git/*",
 			"-not",
 			"-path",
-			destDir+".git/",
+			destDir+".git",
 			"-delete",
 		)
 		if err != nil {
