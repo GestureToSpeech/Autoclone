@@ -49,12 +49,12 @@ func main() {
 		}
 	*/
 	// create pull and push folders
-	err = executeCommand("", "mkdir", config.PushFolder)
+	err = executeCommand("", "mkdir", "-p", config.PushFolder)
 	if err != nil {
 		log.Printf("Error creating push folder %s", err)
 		return
 	}
-	err = executeCommand("", "mkdir", config.PullFolder)
+	err = executeCommand("", "mkdir", "-p", config.PullFolder)
 	if err != nil {
 		log.Printf("Error creating pull folder %s", err)
 		return
