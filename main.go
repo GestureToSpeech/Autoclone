@@ -282,5 +282,5 @@ func getAllBranches(pullDir string, repoSSH string) ([]string, error) {
 }
 
 func fetchOrigin(dir string, repoSSH string) error {
-	return executeCommand(getRepoFolder(repoSSH, dir), "git", "fetch", "origin")
+	return executeCommand(getRepoFolder(repoSSH, dir), "git", "fetch", "--all")
 }
