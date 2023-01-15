@@ -208,11 +208,13 @@ func copyBranch(branch string, originDir string, destDir string, pushDir string)
 		return err
 	}
 	log.Print(destDir, pushDir)
+
+	err = executeCommand(destDir, "git", "checkout", "-b", branch)
+	if err != nil {
+		return err
+	}
+	log.Print("Checkout")
 	/*
-		err = executeCommand(destDir, "git", "checkout", "-b", branch)
-		if err != nil {
-			return err
-		}
 		log.Print("Copy files")
 		err = copyFiles(destDir, originDir, pushDir)
 		if err != nil {
