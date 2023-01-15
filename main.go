@@ -106,13 +106,7 @@ func main() {
 		originRepoDir := getRepoFolder(repo.Ssh, config.PullFolder)
 		destRepoDir := getRepoFolder(gitLabRepo, config.PushFolder)
 		for _, branch := range allBranches {
-			log.Print("Set user")
-			err = setUser(config.Users, destRepoDir)
-			if err != nil {
-				log.Printf("Couldn't set user for repo %s; error message: %s", gitLabRepo, err)
-				return
-			}
-			err = copyBranch(branch, originRepoDir, destRepoDir, config.PushFolder)
+			err = copyBranch(branch, originRepoDir, destRepoDir, config.PushFolder, config.Users)
 			if err != nil {
 				log.Printf("Couldn't copy branch %s from repo %s; error message: %s", branch, repo.Ssh, err)
 				return
@@ -196,7 +190,7 @@ func copyFiles(destDir string, originDir string, pushDir string) error {
 	return err
 }
 
-func copyBranch(branch string, originDir string, destDir string, pushDir string) error {
+func copyBranch(branch string, originDir string, destDir string, pushDir string, users []User) error {
 	log.Print("Pull changes and set correct branch")
 	err := executeCommand(originDir, "git", "checkout", branch)
 	if err != nil {
@@ -216,6 +210,8 @@ func copyBranch(branch string, originDir string, destDir string, pushDir string)
 	if err != nil {
 		return err
 	}
+
+	err = setUser(users, destDir)
 
 	log.Print("Pushing changes")
 	err = executeCommand(destDir, "git", "add", ".")
