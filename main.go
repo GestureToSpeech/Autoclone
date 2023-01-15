@@ -219,7 +219,7 @@ func copyBranch(branch string, originDir string, destDir string, pushDir string)
 		return err
 	}
 
-	log.Print("Pushing changes")
+	log.Print("Pushing changes to repository")
 	err = executeCommand(destDir, "git", "add", ".")
 	if err != nil {
 		return err
