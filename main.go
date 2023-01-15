@@ -214,7 +214,7 @@ func copyBranch(branch string, originDir string, destDir string) error {
 		if err != nil {
 			return err
 		}
-
+		log.Printf("Pull updates for %s", destDir)
 		err = executeCommand(destDir, "git", "pull")
 		if err != nil {
 			return err
