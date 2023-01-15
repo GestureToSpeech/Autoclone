@@ -133,27 +133,25 @@ func getRepoFolder(ssh string, folder string) string {
 
 func copyFiles(destDir string, originDir string, pushDir string) error {
 	// remove old files
-	err := executeCommand(
-		"",
-		"[",
-		"-d",
-		destDir,
-		"]",
-		"&&",
-		"find",
-		destDir,
-		"-mindepth",
-		"1",
-		"-not",
-		"-path",
-		destDir+".git/*",
-		"-not",
-		"-path",
-		destDir+".git/",
-		"-delete",
-	)
-	if err != nil {
-		return err
+	_, err := os.Stat(destDir)
+	if !os.IsNotExist(err) {
+		err = executeCommand(
+			"",
+			"find",
+			destDir,
+			"-mindepth",
+			"1",
+			"-not",
+			"-path",
+			destDir+".git/*",
+			"-not",
+			"-path",
+			destDir+".git/",
+			"-delete",
+		)
+		if err != nil {
+			return err
+		}
 	}
 
 	// copy files
