@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -138,19 +137,19 @@ func copyFiles(destDir string, originDir string, pushDir string) error {
 		"",
 		"[",
 		"-d",
-		fmt.Sprintf("\"%s\"", destDir),
+		destDir,
 		"]",
 		"&&",
 		"find",
-		fmt.Sprintf("\"%s\"", destDir),
+		destDir,
 		"-mindepth",
 		"1",
 		"-not",
 		"-path",
-		fmt.Sprintf("\"%s/.git/*\"", destDir),
+		destDir+".git/*",
 		"-not",
 		"-path",
-		fmt.Sprintf("\"%s/.git\"", destDir),
+		destDir+".git/",
 		"-delete",
 	)
 	if err != nil {
@@ -163,8 +162,8 @@ func copyFiles(destDir string, originDir string, pushDir string) error {
 		"rsync",
 		"-av",
 		"--exclude=\".git\"",
-		fmt.Sprintf("\"%s\"", originDir),
-		fmt.Sprintf("\"%s\"", pushDir),
+		originDir,
+		pushDir,
 	)
 
 	return err
