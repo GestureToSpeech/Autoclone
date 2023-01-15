@@ -119,6 +119,7 @@ func main() {
 				log.Printf("Couldn't copy branch %s from repo %s; error message: %s", branch, repo.Ssh, err)
 				return
 			}
+			break
 		}
 	}
 }
@@ -191,7 +192,7 @@ func copyFiles(destDir string, originDir string, pushDir string) error {
 		"-av",
 		"--exclude=\".git\"",
 		originDir,
-		pushDir,
+		destDir,
 	)
 
 	return err
