@@ -210,7 +210,10 @@ func copyBranch(branch string, originDir string, destDir string) error {
 
 	err = executeCommand(destDir, "git", "checkout", "-b", branch)
 	if err != nil {
-		return err
+		err = executeCommand(destDir, "git", "checkout", branch)
+		if err != nil {
+			return err
+		}
 	}
 
 	log.Print("Copy files")
