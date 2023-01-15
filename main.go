@@ -214,6 +214,11 @@ func copyBranch(branch string, originDir string, destDir string) error {
 		if err != nil {
 			return err
 		}
+
+		err = executeCommand(destDir, "git", "pull")
+		if err != nil {
+			return err
+		}
 	}
 
 	log.Print("Copy files")
