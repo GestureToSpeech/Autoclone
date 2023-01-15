@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 type User struct {
@@ -27,6 +28,8 @@ type Config struct {
 }
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
+
 	// Open the file
 	data, err := ioutil.ReadFile("config.json")
 	if err != nil {
@@ -192,6 +195,7 @@ func copyFiles(destDir string, originDir string, pushDir string) error {
 }
 
 func copyBranch(branch string, originDir string, destDir string, pushDir string) error {
+	log.Print("Pull changes and set correct branch")
 	err := executeCommand(originDir, "git", "checkout", branch)
 	if err != nil {
 		return err
@@ -207,11 +211,13 @@ func copyBranch(branch string, originDir string, destDir string, pushDir string)
 		return err
 	}
 
+	log.Print("Copy files")
 	err = copyFiles(destDir, originDir, pushDir)
 	if err != nil {
 		return err
 	}
 
+	log.Print("Pushing changes")
 	err = executeCommand(destDir, "git", "add", ".")
 	if err != nil {
 		return err
