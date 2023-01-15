@@ -111,6 +111,7 @@ func main() {
 				log.Printf("Couldn't set user for repo %s; error message: %s", repo.Ssh, err)
 				return
 			}
+			log.Print("User set")
 			err = copyBranch(branch, originRepoDir, destRepoDir, config.PushFolder)
 			if err != nil {
 				log.Printf("Couldn't copy branch %s from repo %s; error message: %s", branch, repo.Ssh, err)
