@@ -227,12 +227,12 @@ func copyBranch(branch string, originDir string, destDir string) error {
 	if err != nil {
 		return err
 	}
-
+	log.Print("Commit")
 	err = executeCommand(destDir, "git", "commit", "-m", "Update")
 	if err != nil {
 		return err
 	}
-
+	log.Print("Push")
 	return executeCommand(destDir, "git", "push", "origin", branch)
 }
 
