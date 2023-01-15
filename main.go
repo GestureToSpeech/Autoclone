@@ -106,6 +106,7 @@ func main() {
 		originRepoDir := getRepoFolder(repo.Ssh, config.PullFolder)
 		destRepoDir := getRepoFolder(gitLabRepo, config.PushFolder)
 		for _, branch := range allBranches {
+			log.Print("Set user")
 			err = setUser(config.Users, destRepoDir)
 			if err != nil {
 				log.Printf("Couldn't set user for repo %s; error message: %s", gitLabRepo, err)
