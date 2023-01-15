@@ -159,6 +159,7 @@ func setUser(users []User, dir string) error {
 }
 
 func copyFiles(destDir string, originDir string, pushDir string) error {
+	log.Printf("%s %s %s", destDir, originDir, pushDir)
 	// remove old files
 	_, err := os.Stat(destDir)
 	if !os.IsNotExist(err) {
