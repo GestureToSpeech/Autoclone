@@ -80,24 +80,26 @@ func main() {
 		}
 
 		gitLabRepo := config.SshPushBase + getRepoName(repo.Ssh) + ".git"
-		err = cloneRepo(config.PushFolder, gitLabRepo)
-		if err != nil {
-			log.Printf("Error cloning repo %s; error message: %s", gitLabRepo, err)
-			return
-		}
+		/*
+			err = cloneRepo(config.PushFolder, gitLabRepo)
+			if err != nil {
+				log.Printf("Error cloning repo %s; error message: %s", gitLabRepo, err)
+				return
+			}
+		*/
 
 		err = fetchOrigin(config.PullFolder, repo.Ssh)
 		if err != nil {
 			log.Printf("Error fetching origin repo %s; error message: %s", repo.Ssh, err)
 			return
 		}
-
-		err = fetchOrigin(config.PushFolder, gitLabRepo)
-		if err != nil {
-			log.Printf("Error fetching origin repo %s; error message: %s", gitLabRepo, err)
-			return
-		}
-
+		/*
+			err = fetchOrigin(config.PushFolder, gitLabRepo)
+			if err != nil {
+				log.Printf("Error fetching origin repo %s; error message: %s", gitLabRepo, err)
+				return
+			}
+		*/
 		allBranches, err := getAllBranches(config.PullFolder, repo.Ssh)
 		if err != nil {
 			log.Printf("Couldn't get all branches from repo %s; error message: %s", repo.Ssh, err)
@@ -107,7 +109,7 @@ func main() {
 		originRepoDir := getRepoFolder(repo.Ssh, config.PullFolder)
 		destRepoDir := getRepoFolder(gitLabRepo, config.PushFolder)
 		for _, branch := range allBranches {
-			err = setUser(config.Users, destRepoDir)
+			//err = setUser(config.Users, destRepoDir)
 			if err != nil {
 				log.Printf("Couldn't set user for repo %s; error message: %s", gitLabRepo, err)
 				return
@@ -206,30 +208,32 @@ func copyBranch(branch string, originDir string, destDir string, pushDir string)
 	if err != nil {
 		return err
 	}
-
-	err = executeCommand(destDir, "git", "checkout", "-b", branch)
-	if err != nil {
-		return err
-	}
-
+	/*
+		err = executeCommand(destDir, "git", "checkout", "-b", branch)
+		if err != nil {
+			return err
+		}
+	*/
 	log.Print("Copy files")
 	err = copyFiles(destDir, originDir, pushDir)
 	if err != nil {
 		return err
 	}
+	/*
+		log.Print("Pushing changes")
+		err = executeCommand(destDir, "git", "add", ".")
+		if err != nil {
+			return err
+		}
 
-	log.Print("Pushing changes")
-	err = executeCommand(destDir, "git", "add", ".")
-	if err != nil {
-		return err
-	}
+		err = executeCommand(destDir, "git", "commit", "-m", "Update")
+		if err != nil {
+			return err
+		}
 
-	err = executeCommand(destDir, "git", "commit", "-m", "Update")
-	if err != nil {
-		return err
-	}
-
-	return executeCommand(destDir, "git", "push", "origin", branch)
+		return executeCommand(destDir, "git", "push", "origin", branch)
+	*/
+	return nil
 }
 
 func cloneRepo(dir string, repoSSH string) error {
