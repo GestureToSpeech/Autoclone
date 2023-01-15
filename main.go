@@ -207,22 +207,19 @@ func copyBranch(branch string, originDir string, destDir string, pushDir string)
 	if err != nil {
 		return err
 	}
-	log.Print(destDir, pushDir)
 
 	err = executeCommand(destDir, "git", "checkout", "-b", branch)
 	if err != nil {
 		return err
 	}
-	log.Print("Checkout")
+
+	log.Print("Copy files")
+	err = copyFiles(destDir, originDir, pushDir)
+	if err != nil {
+		return err
+	}
+
 	/*
-		log.Print("Copy files")
-		err = copyFiles(destDir, originDir, pushDir)
-		if err != nil {
-			return err
-		}
-
-		err = setUser(users, destDir)
-
 		log.Print("Pushing changes")
 		err = executeCommand(destDir, "git", "add", ".")
 		if err != nil {
