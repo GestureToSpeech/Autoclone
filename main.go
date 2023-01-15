@@ -190,7 +190,8 @@ func getAllBranches(pullDir string, repoSSH string) ([]string, error) {
 			line = strings.TrimPrefix(line, "*")
 		}
 		line = strings.TrimSpace(line)
-		if line != "" {
+		if line != "" && !strings.Contains(line, " ") && strings.Contains(line, "remotes/origin/") {
+			line = strings.TrimPrefix(line, "remotes/origin/")
 			branches = append(branches, line)
 		}
 	}
