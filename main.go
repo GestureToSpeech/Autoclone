@@ -213,12 +213,11 @@ func copyBranch(branch string, originDir string, destDir string, pushDir string)
 		return err
 	}
 
-	log.Print("Copy files -- 22")
+	log.Print("Copy files")
 	err = copyFiles(destDir, originDir, pushDir)
 	if err != nil {
 		return err
 	}
-	log.Print("Finished")
 
 	/*
 		log.Print("Pushing changes")
