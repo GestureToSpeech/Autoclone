@@ -77,13 +77,21 @@ func main() {
 			return
 		}
 
+		err = fetchOrigin(config.PullFolder, repo.Ssh)
+		if err != nil {
+			log.Printf("Error fetching origin repo %s; error message: %s", repo.Ssh, err)
+			return
+		}
+
 		allBranches, err := getAllBranches(config.PullFolder, repo.Ssh)
 		if err != nil {
 			log.Printf("Couldn't get all branches from repo %s; error message: %s", repo.Ssh, err)
 			return
 		}
 
-		log.Print(allBranches)
+		for _, branch := range allBranches {
+			log.Print(branch)
+		}
 	}
 }
 
@@ -188,4 +196,8 @@ func getAllBranches(pullDir string, repoSSH string) ([]string, error) {
 	}
 
 	return branches, nil
+}
+
+func fetchOrigin(dir string, repoSSH string) error {
+	return executeCommand(getRepoFolder(repoSSH, dir), "git", "fetch", "origin")
 }
