@@ -1,24 +1,64 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/pelletier/go-toml"
+	"io/ioutil"
+	"os"
+	"os/exec"
 )
 
-func main() {
-	cfg, err := toml.LoadFile("config.tml")
-	catch(err)
-
-	list := cfg.Get("repos").([]interface{})
-
-	// Iterate through the list and print the strings
-	for _, item := range list {
-		fmt.Println(item.(string))
+type Config struct {
+	PushFolder string
+	PullFolder string
+	Repos      []struct {
+		Ssh string
+		Key string
 	}
 }
 
-func catch(err error) {
+func main() {
+	// Open the file
+	data, err := ioutil.ReadFile("config.json")
 	if err != nil {
-		panic(err)
+		fmt.Println("Error reading file:", err)
+		return
 	}
+
+	// Unmarshal the JSON data into the Config struct
+	var config Config
+	err = json.Unmarshal(data, &config)
+	if err != nil {
+		fmt.Println("Error parsing JSON:", err)
+		return
+	}
+
+	// Print the values of the MainFolder and Repos fields
+	fmt.Println("Push folder:", config.PushFolder)
+	fmt.Println("Pull folder:", config.PullFolder)
+	fmt.Println("Repos:")
+	for _, repo := range config.Repos {
+		fmt.Println("  SSH:", repo.Ssh)
+		fmt.Println("  Key:", repo.Key)
+	}
+
+	// remove pull and push folders
+	err = executeCommand("", "rm", "-rf", fmt.Sprintf("\"%s\"", config.PushFolder))
+	if err != nil {
+		fmt.Println("Error removing push folder", err)
+		return
+	}
+}
+
+func executeCommand(dir string, commandName string, arg ...string) error {
+	cmd := exec.Command(commandName, arg...)
+	if dir != "" {
+		cmd.Dir = dir
+	}
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		return err
+	}
+	return nil
 }
